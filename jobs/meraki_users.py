@@ -110,11 +110,6 @@ class CreateUsers(Job):
         self.data = data
         self.commit = commit
 
-        # Validate email
-        if not EMAIL_REGEX.match(self.data["user_email"]):
-            self.log_failure(obj=None, message="Please enter a valid email.")
-            return
-
         # Verify that an API Key is set
         try:
             api_key = os.environ["MERAKI_DASHBOARD_API_KEY"]
