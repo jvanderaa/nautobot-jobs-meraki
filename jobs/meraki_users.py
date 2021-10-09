@@ -4,32 +4,6 @@ from nautobot.extras.jobs import ChoiceVar, Job, StringVar
 import meraki
 
 
-def get_meraki_org_ids_for_form():
-    """Get the organizational IDs for Meraki and return in a tuple for populating the Django form."""
-    # Test to see if Meraki API key is set in the environment
-    try:
-        try:
-            api_key = os.environ["MERAKI_DASHBOARD_API_KEY"]
-        except:
-            raise ValueError(
-                "Meraki API Key is not specified in the environment. Please set MERAKI_DASHBOARD_API_KEY"
-            )
-
-        dashboard = meraki.DashboardAPI(suppress_logging=True)
-        # Get the organization list
-        orgs = dashboard.organizations.getOrganizations()
-        org_list = []
-        for org in orgs:
-            org_list.append((org["id"], org["name"]))
-
-        return tuple(org_list)
-    except:  # noqa: E722
-        return None
-
-
-MERAKI_ORG_CHOICES = get_meraki_org_ids_for_form()
-
-
 class CreateUsers(Job):
     """Class to create a Meraki user
 
@@ -45,11 +19,11 @@ class CreateUsers(Job):
         description="User full name to add", label="User Full Name", required=True
     )
 
-    meraki_org_id = ChoiceVar(
+    meraki_org_id = StringVar(
         description="Meraki Org ID",
         label="Meraki Organization ID",
-        choices=MERAKI_ORG_CHOICES,
         required=False,
+        default=os.getenv("DEFAULT_MERAKI_ORG_NAME", "Unable to find org name")
     )
 
     meraki_network = StringVar(
