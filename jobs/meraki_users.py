@@ -53,7 +53,7 @@ class CreateUsers(Job):
     )
 
     meraki_network = StringVar(
-        description="Network Name to Add", label="Network Name", required=True
+        description="Network Name to Add", label="Network Name", required=True, default="MN01"
     )
 
     meraki_access_level = ChoiceVar(
@@ -108,7 +108,7 @@ class CreateUsers(Job):
         for user_info in existing_users:
             if self.data["user_email"] in user_info.get("email"):
                 self.log_info(
-                    object=None,
+                    obj=None,
                     message=f"{self.data['user_email']} already exists in the organization.",
                 )
                 # Return the function as this is all that is needed
@@ -123,6 +123,6 @@ class CreateUsers(Job):
         )
 
         self.log_success(
-            object=None,
+            obj=None,
             message=f"Successfully created account for email {self.data['user_email']}",
         )
