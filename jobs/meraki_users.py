@@ -60,10 +60,10 @@ class CreateUsers(Job):
         description="Level of access",
         label="Access Level",
         choices=(
-            ("Full", "full"),
-            ("Read Only", "read-only"),
-            ("Enterprise", "enterprise"),
-            ("None", "none"),
+            ("full", "Full"),
+            ("read-only", "Read Only"),
+            ("enterprise", "Enterprise"),
+            ("none", "None"),
         ),
     )
 
