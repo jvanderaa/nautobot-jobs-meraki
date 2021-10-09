@@ -4,7 +4,7 @@ import re
 from nautobot.extras.jobs import ChoiceVar, Job, StringVar
 import meraki
 
-EMAIL_REGEX = r"[^@]+@[networktocode]+\.[^@]+"
+EMAIL_REGEX = r"[^@]+@[networktocode|josh\-v]+\.[^@]+"
 
 
 def get_meraki_org_ids_for_form():
@@ -162,6 +162,7 @@ class CreateUsers(Job):
             name=self.data["user_name"],
             email=self.data["user_email"],
             orgAccess=self.data["meraki_access_level"],
+            networkId=network_id
         )
 
         self.log_success(
