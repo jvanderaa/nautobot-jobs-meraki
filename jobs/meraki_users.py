@@ -1,8 +1,10 @@
 import os
+import re
 
 from nautobot.extras.jobs import ChoiceVar, Job, StringVar
 import meraki
 
+EMAIL_REGEX = re.compile(r"[^@]+@[networktocode]+\.[^@]+")
 
 def get_meraki_org_ids_for_form():
     """Get the organizational IDs for Meraki and return in a tuple for populating the Django form."""
@@ -87,6 +89,11 @@ class CreateUsers(Job):
         """
         self.data = data
         self.commit = commit
+
+        # Validate email
+        if not EMAIL_REGEX.match(self.data["user_email"]):
+            self.log_failure(obj=None, message="Please enter a valid email.")
+            return
 
         # Verify that an API Key is set
         try:
