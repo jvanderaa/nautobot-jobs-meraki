@@ -100,7 +100,7 @@ class CreateUsers(Job):
         self.data = None
         self.commit = None
 
-    def run(self, data, commit):
+    def run(self, data, commit, test_route=None):
         """Run execution
 
         Args:
@@ -117,6 +117,9 @@ class CreateUsers(Job):
             raise ValueError(
                 "Meraki API Key is not specified in the environment. Please set MERAKI_DASHBOARD_API_KEY"
             )
+
+        if test_route is not None:
+            self.log_success(obj=None, message="Using the test route!") 
 
         # Get a dashboard object to work from
         dashboard = meraki.DashboardAPI(suppress_logging=True, api_key=api_key)
