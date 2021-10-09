@@ -4,7 +4,7 @@ import re
 from nautobot.extras.jobs import ChoiceVar, Job, StringVar
 import meraki
 
-EMAIL_REGEX = re.compile(r"[^@]+@[networktocode]+\.[^@]+")
+EMAIL_REGEX = r"[^@]+@[networktocode]+\.[^@]+"
 
 def get_meraki_org_ids_for_form():
     """Get the organizational IDs for Meraki and return in a tuple for populating the Django form."""
@@ -40,7 +40,7 @@ class CreateUsers(Job):
     """
 
     user_email = StringVar(
-        description="User Email to add", label="User Email", required=True
+        description="User Email to add", label="User Email", required=True, regex=EMAIL_REGEX
     )
 
     user_name = StringVar(
