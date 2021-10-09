@@ -3,6 +3,7 @@ import os
 from nautobot.extras.jobs import ChoiceVar, Job, StringVar
 import meraki
 
+
 class TryThings(Job):
     """Class to create a Meraki user
 

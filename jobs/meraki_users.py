@@ -6,6 +6,7 @@ import meraki
 
 EMAIL_REGEX = r"[^@]+@[networktocode]+\.[^@]+"
 
+
 def get_meraki_org_ids_for_form():
     """Get the organizational IDs for Meraki and return in a tuple for populating the Django form."""
     # Test to see if Meraki API key is set in the environment
@@ -32,6 +33,19 @@ def get_meraki_org_ids_for_form():
 MERAKI_ORG_CHOICES = get_meraki_org_ids_for_form()
 
 
+def get_meraki_networks_of_orgid(org_id: str = None):
+    try:
+        api_key = os.environ["MERAKI_DASHBOARD_API_KEY"]
+    except:
+        raise ValueError(
+            "Meraki API Key is not specified in the environment. Please set MERAKI_DASHBOARD_API_KEY"
+        )
+
+    dashboard = meraki.DashboardAPI(suppress_logging=True, api_key=api_key)
+    networks = dashboard.organizations.getOrganizationNetworks(org_id)
+    return tuple([(x["id"], x["name"]) for x in networks])
+
+
 class CreateUsers(Job):
     """Class to create a Meraki user
 
@@ -40,7 +54,10 @@ class CreateUsers(Job):
     """
 
     user_email = StringVar(
-        description="User Email to add", label="User Email", required=True, regex=EMAIL_REGEX
+        description="User Email to add",
+        label="User Email",
+        required=True,
+        regex=EMAIL_REGEX,
     )
 
     user_name = StringVar(
@@ -55,7 +72,10 @@ class CreateUsers(Job):
     )
 
     meraki_network = StringVar(
-        description="Network Name to Add", label="Network Name", required=True, default="MN01"
+        description="Network Name to Add",
+        label="Network Name",
+        required=True,
+        default="MN01",
     )
 
     meraki_access_level = ChoiceVar(
@@ -120,6 +140,21 @@ class CreateUsers(Job):
                 )
                 # Return the function as this is all that is needed
                 return
+
+        # Get the networks for the organization
+        organization_networks = get_meraki_networks_of_orgid(self.data["meraki_org_id"])
+
+        network_id = None
+        for network in organization_networks:
+            if network[1] == self.data["meraki_network"]:
+                network_id = network[0]
+
+        if network_id is None:
+            self.log_failure(
+                obj=None,
+                message="Unable to find the network within the organization selected.",
+            )
+            return
 
         # The user does not exist, create the user account
         dashboard.organizations.createOrganizationAdmin(
