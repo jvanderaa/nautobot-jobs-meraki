@@ -1,5 +1,4 @@
 import os
-import re
 
 from nautobot.extras.jobs import ChoiceVar, Job, StringVar
 import meraki
@@ -100,7 +99,7 @@ class CreateUsers(Job):
         self.data = None
         self.commit = None
 
-    def run(self, data, commit, test_route=None):
+    def run(self, data, commit):
         """Run execution
 
         Args:
@@ -110,6 +109,11 @@ class CreateUsers(Job):
         self.data = data
         self.commit = commit
 
+        if self.commit is False:
+            self.log_info(obj=None, message="Commit set to False")
+            self.log_info(obj=None, message=f"Data pushed in: {self.data}")
+            return
+
         # Verify that an API Key is set
         try:
             api_key = os.environ["MERAKI_DASHBOARD_API_KEY"]
@@ -117,9 +121,6 @@ class CreateUsers(Job):
             raise ValueError(
                 "Meraki API Key is not specified in the environment. Please set MERAKI_DASHBOARD_API_KEY"
             )
-
-        if test_route is not None:
-            self.log_success(obj=None, message="Using the test route!") 
 
         # Get a dashboard object to work from
         dashboard = meraki.DashboardAPI(suppress_logging=True, api_key=api_key)
