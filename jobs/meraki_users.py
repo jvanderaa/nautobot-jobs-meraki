@@ -3,7 +3,8 @@ import os
 from nautobot.extras.jobs import ChoiceVar, Job, StringVar
 import meraki
 
-EMAIL_REGEX = r"[^@]+@[networktocode|josh\-v]+\.[^@]+"
+#EMAIL_REGEX = r"[^@]+@[networktocode|josh\-v]+\.[^@]+"
+EMAIL_REGEX = os.getenv("NAUTOBOT_JOB_MERAKI_EMAIL_VALIDATION_REGEX", ".*")
 
 
 def get_meraki_org_ids_for_form():
@@ -54,7 +55,7 @@ class CreateUsers(Job):
 
     user_email = StringVar(
         description="User Email to add",
-        label="User Email",
+        label=f"User Email, regex: {EMAIL_REGEX}",
         required=True,
         regex=EMAIL_REGEX,
     )
@@ -73,7 +74,7 @@ class CreateUsers(Job):
     meraki_network = StringVar(
         description="Network Name to Add",
         label="Network Name",
-        required=True,
+        required=False,
         default="MN01",
     )
 
