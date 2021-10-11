@@ -75,7 +75,7 @@ class CreateUsers(Job):
         description="Network Name to Add",
         label="Network Name",
         required=False,
-        default="MN01",
+        default="",
     )
 
     meraki_access_level = ChoiceVar(
