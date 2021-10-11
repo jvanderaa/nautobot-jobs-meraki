@@ -3,7 +3,6 @@ import os
 from nautobot.extras.jobs import ChoiceVar, Job, StringVar
 import meraki
 
-#EMAIL_REGEX = r"[^@]+@[networktocode|josh\-v]+\.[^@]+"
 EMAIL_REGEX = os.getenv("NAUTOBOT_JOB_MERAKI_EMAIL_VALIDATION_REGEX", ".*")
 
 
